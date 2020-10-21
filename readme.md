@@ -3,7 +3,8 @@
 
 ### usage
 
-<code>
+```python
+
 from skagenparkering import SkagenParkering
 
 api = SkagenParkering("","","")
@@ -14,4 +15,4 @@ if res == 200:
     for item in cars:
         print(item.NMBRPLTE)
 
-</code>
+```
