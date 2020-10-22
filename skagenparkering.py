@@ -17,8 +17,11 @@ class SkagenParkering():
         Makes a login call and stores the authenticated session used for further calls.
         Returns the http status code.
         '''
+        headers = {
+            'User-Agent': 'UnknownApp/0.1'
+        }
         pload = {'UserName': self.__username, 'Password': self.__password}
-        r = self.__clientWithSessionData.post("https://permit.parkingguru.com/no/Account/LogIn", data=pload)
+        r = self.__clientWithSessionData.post("https://permit.parkingguru.com/no/Account/LogIn", data=pload, headers=headers)
         return r.status_code
 
     
@@ -27,7 +30,10 @@ class SkagenParkering():
         Returns a list of still valid registered cars.
         if failed, the http status code is returned.
         '''
-        r = self.__clientWithSessionData.get("http://permit.parkingguru.com/no/GuestWebSetup/ExpiredValidItems?stupidno="+self.__customernumber)
+        headers = {
+            'User-Agent': 'UnknownApp/0.1'
+        }
+        r = self.__clientWithSessionData.get("http://permit.parkingguru.com/no/GuestWebSetup/ExpiredValidItems?stupidno="+self.__customernumber, headers=headers)
         if r.status_code != 200: return r.status_code
 
         registeredCars = r.json()
@@ -36,11 +42,14 @@ class SkagenParkering():
             vl.append(ValidParking(**item))
         return vl
 
-    def registerCar(self, licensePlate, guestName):
+    def registerCar(self, payload):
         '''
         Will register car for 1 day.
-        
+        send in NewRegistration as json. It has that as method.
         '''
-        payload = {'nmbrplte': licensePlate, "gustname":guestName, "cmnt":"","days":1,"extnidfc":"","hours":0,"stupidno":int(self.__customernumber),"vlidfromtmst":"null","vliduntltmst":"null"}
-        a = self.__clientWithSessionData.post("http://permit.parkingguru.com/no/GuestWebSetup/CreateGpWebCheckin", json=payload)
+
+        headers = {
+            'User-Agent': 'UnknownApp/0.1'
+        }
+        a = self.__clientWithSessionData.post("http://permit.parkingguru.com/no/GuestWebSetup/CreateGpWebCheckin", json=payload, headers=headers)
         return a.status_code
